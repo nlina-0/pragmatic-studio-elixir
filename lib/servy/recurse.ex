@@ -31,11 +31,16 @@ defmodule Recurse do
     # The process of taking a list and mapping over it is known as a map algorithm.
     def double_each([head | tail]) do
         [head * 2 | double_each(tail)]
-      end
+    end
     
-      def double_each([]) do
-        []
-      end
+    def double_each([]) do
+      []
+    end
+
+    # Exercise: Implement map 15.Slicing and dicing
+    # def my_map([head|tail], func) do
+    #   [head | ]
+    # end
   end
   
   # IO.puts Recurse.sum([1, 2, 3, 4, 5], 0)

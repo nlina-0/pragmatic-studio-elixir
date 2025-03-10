@@ -14,6 +14,9 @@ defmodule Servy.Handler do
 
     import Servy.FileHandler, only: [handle_file: 2]
 
+    # Why does the alias work? Do  i not need to import it?
+    # import Servy.BearController, only: [index: 1, show: 2, create: 2]
+
     @doc "Transforms the request into a response."
     def handle(request) do
         request
@@ -41,6 +44,8 @@ defmodule Servy.Handler do
         %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
     end
 
+    # Bears route
+
     def route(%Conv{ method: "GET", path: "/bears" } = conv) do
         BearController.index(conv)
     end
@@ -58,7 +63,7 @@ defmodule Servy.Handler do
     
     # delete route
     def route(%Conv{ method: "DELETE", path: "/bears/" <> _id } = conv) do
-        %{ conv | status: 403, resp_body: "Deleting a bear is forbidden" }
+        BearController.delete(conv, conv.params)
     end
     
     # FORM: responds by serving the form
@@ -178,17 +183,17 @@ response = Servy.Handler.handle(request)
 
 IO.puts response
 
-request = """
-GET /bears/new HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
+# request = """
+# GET /bears/new HTTP/1.1
+# Host: example.com
+# User-Agent: ExampleBrowser/1.0
+# Accept: */*
 
-"""
+# """
 
-response = Servy.Handler.handle(request)
+# response = Servy.Handler.handle(request)
 
-IO.puts response
+# IO.puts response
 
 request = """
 GET /pages/contact HTTP/1.1
