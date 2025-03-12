@@ -134,6 +134,7 @@ response = Servy.Handler.handle(request)
 
 IO.puts response
 
+
 request = """
 GET /bears HTTP/1.1
 Host: example.com
@@ -146,6 +147,7 @@ response = Servy.Handler.handle(request)
 
 IO.puts response
 
+
 request = """
 GET /bears/1 HTTP/1.1
 Host: example.com
@@ -157,6 +159,7 @@ Accept: */*
 response = Servy.Handler.handle(request)
 
 IO.puts response
+
 
 # Delete request
 request = """
@@ -171,6 +174,7 @@ response = Servy.Handler.handle(request)
 
 IO.puts response
 
+
 request = """
 GET /about HTTP/1.1
 Host: example.com
@@ -182,6 +186,7 @@ Accept: */*
 response = Servy.Handler.handle(request)
 
 IO.puts response
+
 
 # request = """
 # GET /bears/new HTTP/1.1
@@ -195,6 +200,7 @@ IO.puts response
 
 # IO.puts response
 
+
 request = """
 GET /pages/contact HTTP/1.1
 Host: example.com
@@ -207,6 +213,7 @@ response = Servy.Handler.handle(request)
 
 IO.puts response
 
+
 request = """
 POST /bears HTTP/1.1
 Host: example.com
@@ -215,7 +222,7 @@ Accept: */*
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 21
 
-name=Baloo&type=Brown
+name=Baloo&type=Grizzly
 """
 
 response = Servy.Handler.handle(request)
