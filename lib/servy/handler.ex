@@ -24,20 +24,10 @@ defmodule Servy.Handler do
         |> rewrite_path
         |> log
         |> route
-        |> emojify
         |> track
         |> format_response
         
     end
-
-    def emojify(%Conv{status: 200} = conv) do
-        emojies = String.duplicate("🎉", 5)
-        body = emojies <> "\n" <> conv.resp_body <> "\n" <> emojies
-
-        %{ conv | resp_body: body }
-    end
-
-    def emojify(conv), do: conv
 
     # function clauses
     def route(%Conv{ method: "GET", path: "/wildthings" } = conv) do
@@ -74,21 +64,21 @@ defmodule Servy.Handler do
     #     |> handle_file(conv)
     # end 
 
-    def route(%Conv{method: "GET", path: "/bears/new"} = conv) do
-        file = Path.join(@pages_path, "form.html")
+    # def route(%Conv{method: "GET", path: "/bears/new"} = conv) do
+    #     file = Path.join(@pages_path, "form.html")
 
-        case File.read(file) do
-            {:ok, content} -> 
-                %{ conv | status: 200, resp_body: content }
+    #     case File.read(file) do
+    #         {:ok, content} -> 
+    #             %{ conv | status: 200, resp_body: content }
             
-            {:error, :enoent} -> 
-                %{ conv| status: 404, resp_body: "File not found!"}
+    #         {:error, :enoent} -> 
+    #             %{ conv| status: 404, resp_body: "File not found!"}
                 
-            {:error, reason} -> 
-                %{ conv| status: 500, resp_body: "File error: #{reason}"}
+    #         {:error, reason} -> 
+    #             %{ conv| status: 500, resp_body: "File error: #{reason}"}
 
-        end
-    end
+    #     end
+    # end
 
     # ABOUT
     def route(%Conv{ method: "GET", path: "/about" } = conv) do
@@ -113,118 +103,11 @@ defmodule Servy.Handler do
     
     def format_response(%Conv{} = conv) do
         """
-        HTTP/1.1 #{Conv.full_status(conv)}
-        Content-Type: text/html
-        Content-Length: #{byte_size(conv.resp_body)}
-        
+        HTTP/1.1 #{Conv.full_status(conv)}\r
+        Content-Type: text/html\r
+        Content-Length: #{String.length(conv.resp_body)}\r
+        \r
         #{conv.resp_body}
         """
     end
 end
-
-request = """
-GET /wildthings HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Servy.Handler.handle(request)
-
-IO.puts response
-
-
-request = """
-GET /bears HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Servy.Handler.handle(request)
-
-IO.puts response
-
-
-request = """
-GET /bears/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Servy.Handler.handle(request)
-
-IO.puts response
-
-
-# Delete request
-request = """
-DELETE /bears/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Servy.Handler.handle(request)
-
-IO.puts response
-
-
-request = """
-GET /about HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Servy.Handler.handle(request)
-
-IO.puts response
-
-
-# request = """
-# GET /bears/new HTTP/1.1
-# Host: example.com
-# User-Agent: ExampleBrowser/1.0
-# Accept: */*
-
-# """
-
-# response = Servy.Handler.handle(request)
-
-# IO.puts response
-
-
-request = """
-GET /pages/contact HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Servy.Handler.handle(request)
-
-IO.puts response
-
-
-request = """
-POST /bears HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 21
-
-name=Baloo&type=Grizzly
-"""
-
-response = Servy.Handler.handle(request)
-
-IO.puts response
