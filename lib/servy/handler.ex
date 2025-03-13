@@ -9,9 +9,7 @@ defmodule Servy.Handler do
     @pages_path Path.expand("../../pages", __DIR__)
 
     import Servy.Plugin, only: [rewrite_path: 1, log: 1, track: 1]
-
     import Servy.Parser, only: [parse: 1]
-
     import Servy.FileHandler, only: [handle_file: 2]
 
     # Why does the alias work? Do  i not need to import it?
@@ -36,6 +34,10 @@ defmodule Servy.Handler do
 
     # Bears route
 
+    def route(%Conv{ method: "GET", path: "/api/bears" } = conv) do
+        Servy.Api.BearController.index(conv)
+    end
+    
     def route(%Conv{ method: "GET", path: "/bears" } = conv) do
         BearController.index(conv)
     end
@@ -104,7 +106,7 @@ defmodule Servy.Handler do
     def format_response(%Conv{} = conv) do
         """
         HTTP/1.1 #{Conv.full_status(conv)}\r
-        Content-Type: text/html\r
+        Content-Type: #{conv.resp_content_type}\r
         Content-Length: #{String.length(conv.resp_body)}\r
         \r
         #{conv.resp_body}
