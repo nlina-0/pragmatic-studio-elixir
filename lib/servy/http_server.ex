@@ -30,13 +30,18 @@ defmodule Servy.HttpServer do
   
       # Suspends (blocks) and waits for a client connection. When a connection
       # is accepted, `client_socket` is bound to a new client socket.
+      # the controlling process
       {:ok, client_socket} = :gen_tcp.accept(listen_socket)
   
       IO.puts "⚡️  Connection accepted!\n"
       IO.inspect(client_socket, label: "client socket")
   
       # Receives the request and sends a response over the client socket.
-      spawn(fn -> serve(client_socket) end)
+      # spawn(fn -> serve(client_socket) end)
+
+      # creates a new controlling process which will automatically close the socket when it dies.
+      pid = spawn(fn -> serve(client_socket) end)
+      :ok = :gen_tcp.controlling_process(client_socket, pid)
       # functions are closures: data passed from one process to another is always deep copied since processes share no memory.
   
       # Loop back to wait and accept the next connection.
