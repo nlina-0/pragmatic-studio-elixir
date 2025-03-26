@@ -23,6 +23,7 @@ defmodule Servy.Handler do
         |> log
         |> route
         |> track
+        |> put_content_length
         |> format_response
         
     end
@@ -49,6 +50,10 @@ defmodule Servy.Handler do
     end
 
     # name=Baloo&type=Brown
+    def route(%Conv{ method: "POST", path: "/api/bears"} = conv) do
+        Servy.Api.BearController.create(conv, conv.params)
+    end
+
     def route(%Conv{ method: "POST", path: "/bears"} = conv) do
         BearController.create(conv, conv.params)
     end
@@ -102,12 +107,18 @@ defmodule Servy.Handler do
     def route(%Conv{ path: path } = conv) do
         %{ conv | status: 404, resp_body: "No #{path} here!" }
     end
+
+    def put_content_length(conv) do
+        headers = Map.put(conv.resp_headers, "Content-Length", String.length(conv.resp_body))
+        %{ conv | resp_headers: headers }
+    end
     
+    # 19. Rendering JSON exercise: imagine you have an arbitrary number of response headers and you want to dynamically generate a multi-line string of all the response header keys and values.
     def format_response(%Conv{} = conv) do
         """
         HTTP/1.1 #{Conv.full_status(conv)}\r
-        Content-Type: #{conv.resp_content_type}\r
-        Content-Length: #{String.length(conv.resp_body)}\r
+        Content-Type: #{conv.resp_headers["Content-Type"]}\r
+        Content-Length: #{conv.resp_headers["Content-Length"]}\r
         \r
         #{conv.resp_body}
         """

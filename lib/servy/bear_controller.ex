@@ -10,9 +10,14 @@ defmodule Servy.BearController do
             Wildthings.list_bears()
             |> Enum.sort(&Bear.order_asc_by_name/2)
 
+        # find the file path
+        # read the json file
+        # use library to parse json
+        # map to bears?
+
        render(conv, "index.eex", bears: bears)
     end
-
+    
     def show(conv, %{"id" => id}) do
         bear = Wildthings.get_bear(id)
 

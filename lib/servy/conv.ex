@@ -1,9 +1,10 @@
 defmodule Servy.Conv do
+    # any values here set the default
     defstruct   method: "", 
                 path: "", 
                 params: %{},
                 headers: %{}, 
-                resp_content_type: "text/html",
+                resp_headers: %{"Content-Type" => "text/html"},
                 resp_body: "", 
                 status: nil
 
